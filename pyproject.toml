@@ -1,0 +1,31 @@
+[project]
+name = "dd_me5"
+description = "A repository for multilingual text embedding."
+keywords = ["feature-extraction", "multilingual", "nlp", "text-embedding"]
+version = "0.0.1"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+dependencies = [
+    "loguru",
+    "optimum[onnxruntime-gpu]",
+    "pydantic>=2",
+    "pydantic-settings",
+    "transformers",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx", "black", "flake8", "isort"]
+fastapi = ["uvicorn", "gunicorn", "python-multipart", "aiohttp", "fastapi"]
+kafka = ["faststream[kafka]"]
+rabbit = ["faststream[rabbit]"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[project.scripts]
+queue = "dd_me5.interfaces._queue:main"
+api = "dd_me5.interfaces._api:main"

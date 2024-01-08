@@ -1,0 +1,10 @@
+name: dd_me5
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - spyder
+  - pip
+  - pip:
+    - -e .[dev,fastapi]
+
