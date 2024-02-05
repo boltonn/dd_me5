@@ -25,10 +25,10 @@ class MultilingualE5:
             model_dir, 
             local_files_only=True,
             execution_provider=provider,
-        )
+        ).to(device)
         self.tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True, use_fast=True)
         self.model_dir = model_dir
-        self.device = device
+        self.device = self.model.device
         logger.info(f"Loaded model from {model_dir} onto {device}")
 
         if warmup:
@@ -57,9 +57,7 @@ class MultilingualE5:
         with torch.inference_mode():
             inputs = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
             outputs = self.model(**inputs)
-            logger.info(f"Device: {outputs.last_hidden_state.device}, {inputs.attention_mask.device}")
-            pooled = MultilingualE5.pool(outputs.last_hidden_state, inputs.attention_mask.to("cpu"), method="avg")
+            pooled = MultilingualE5.pool(outputs.last_hidden_state, inputs.attention_mask, method="avg")
             if normalize:
                 pooled = F.normalize(pooled, p=2, dim=1)
-            logger.info(f"Shape: {pooled.shape}")
         return pooled.cpu().numpy()
