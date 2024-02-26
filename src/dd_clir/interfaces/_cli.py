@@ -7,7 +7,7 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 
-from dd_me5.core.model import MultilingualE5
+from dd_clir.core.models.onnx import OnnxModel
 
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -39,7 +39,7 @@ def load(file_path: Path, min_length: int = 50) -> str:
     if text and len(text) > min_length:
         return {"file_path": file_path, "text": text.strip()}
 
-class ME5Dataset(Dataset):
+class EmbeddingDataset(Dataset):
     def __init__(self, input_dir: Path):
         file_paths = [p for p in input_dir.glob('**/*.json')]
         self.file_paths = np.array(file_paths)
@@ -69,10 +69,11 @@ def main(
     device: str,
     batch_size: int = 32,
     num_workers: int = 4,
+    quantized: bool = False
 ):
     
-    model = MultilingualE5(model_dir=model_dir, device=device)
-    dataset = ME5Dataset(in_dir)
+    model = OnnxModel(model_dir=model_dir, device=device, quantized=quantized)
+    dataset = EmbeddingDataset(in_dir)
     dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, collate_fn=_collate)
 
     n_batches = len(dataloader)
@@ -86,16 +87,29 @@ def main(
                 write_embedding(file_path=file_path, embedding=embedding)
                 n_images += 1
                 progress_bar.set_description(f"Processed {n_images} documents")
-            progress_bar.update(1)
+        progress_bar.update(1)
 
 
 if __name__ == "__main__":
+    
     import argparse
+
+    def str2bool(v):
+        if isinstance(v, bool):
+            return v
+        if v.lower() in ('yes', 'true', 't', 'y', '1'):
+            return True
+        elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+            return False
+        else:
+            raise argparse.ArgumentTypeError('Boolean value expected.')
+        
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_dir", type=Path, required=True)
     parser.add_argument("--in_dir", type=Path, required=True)
     parser.add_argument("--device", type=str, required=True)
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--num_workers", type=int, default=4)
+    parser.add_argument("--quantized", type=str2bool, default=False)
     args = parser.parse_args()
     main(**vars(args))

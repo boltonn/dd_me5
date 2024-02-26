@@ -1,5 +1,5 @@
 [project]
-name = "dd_me5"
+name = "dd_clir"
 description = "A repository for multilingual text embedding."
 keywords = ["feature-extraction", "multilingual", "nlp", "text-embedding"]
 version = "0.0.1"
@@ -11,7 +11,6 @@ classifiers = [
 ]
 dependencies = [
     "loguru",
-    "optimum[onnxruntime-gpu]",
     "pydantic>=2",
     "pydantic-settings",
     "transformers",
@@ -20,12 +19,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest", "httpx", "black", "flake8", "isort"]
 fastapi = ["uvicorn", "gunicorn", "python-multipart", "aiohttp", "fastapi"]
-kafka = ["faststream[kafka]"]
-rabbit = ["faststream[rabbit]"]
-
-[tool.setuptools]
-package-dir = {"" = "src"}
+cpu = ["optimum[onnxruntime]"]
+cuda = ["optimum[onnxruntime-gpu]"]
 
 [project.scripts]
-queue = "dd_me5.interfaces._queue:main"
-api = "dd_me5.interfaces._api:main"
+fastapi = "dd_clir.interfaces._fastapi:main"

@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from dd_me5.schemas.enums import Device
+from dd_clir.schemas.enums import Device
 
 
 class Settings(BaseSettings):
@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     port: int = Field(8080, validation_alias="PORT", description="Port to bind to")
     model_dir: Path = Field(..., description="Path to model directory")
     device: Device = Field(Device.cuda, description="Device to use @ cpu, cuda")
+    quantized: bool = Field(False, description="Quantized mode")
     warmup: bool = Field(False, description="Warmup mode")
     max_batch_size: Optional[int] = Field(32, description="Maximum batch size")
     batch_timeout: Optional[float] = Field(0.01, description="Batch timeout")

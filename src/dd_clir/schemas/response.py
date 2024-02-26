@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field, conlist
 
-from dd_me5.utils.info import service_info
+from dd_clir.utils.info import service_info
 
 
 class ModelAnnotation(BaseModel):
@@ -14,7 +14,7 @@ class ModelAnnotation(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
 
-class MultilingualE5Response(ModelAnnotation):
+class EmbeddingResponse(ModelAnnotation):
     """Language annotation object"""
 
-    embedding: conlist(float, min_length=1024, max_length=1024) = Field(..., description="Language embedding")
+    embedding: list[float] = Field(..., description="Language embedding")

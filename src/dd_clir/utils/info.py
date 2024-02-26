@@ -2,7 +2,7 @@ from importlib.metadata import metadata
 
 from pydantic import BaseModel
 
-metadata = metadata("dd_me5")
+metadata = metadata("dd_clir")
 
 
 class ServiceInfo(BaseModel):

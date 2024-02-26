@@ -1,9 +1,9 @@
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
-from dd_me5.schemas.enums import EmbeddingType
+from dd_clir.schemas.enums import EmbeddingType
 
 
-class MultilingualE5Request(BaseModel):
+class EmbeddingRequest(BaseModel):
     text: str = Field(..., description="Text to embed")
     embedding_type: EmbeddingType = Field(
         EmbeddingType.passage, 

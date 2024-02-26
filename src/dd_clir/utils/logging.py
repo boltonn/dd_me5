@@ -4,7 +4,7 @@ from sys import stdout
 
 from loguru import logger
 
-from dd_me5.schemas.settings import settings
+from dd_clir.schemas.settings import settings
 
 DEFAULT_LOG_FORMAT = (
     "<level>{level: <8}</level> "

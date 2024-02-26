@@ -1,13 +1,13 @@
 from contextlib import asynccontextmanager
 
-from dd_me5.core.model import MultilingualE5
-from dd_me5.schemas.request import MultilingualE5Request
-from dd_me5.schemas.response import MultilingualE5Response
-from dd_me5.schemas.settings import settings
-from dd_me5.utils.batch import batch
-from dd_me5.utils.health import ServiceHealthStatus, service_health
-from dd_me5.utils.info import ServiceInfo, service_info
-from dd_me5.utils.logging import logger
+from dd_clir.core.models.onnx import OnnxModel
+from dd_clir.schemas.request import EmbeddingRequest
+from dd_clir.schemas.response import EmbeddingResponse
+from dd_clir.schemas.settings import settings
+from dd_clir.utils.batch import batch
+from dd_clir.utils.health import ServiceHealthStatus, service_health
+from dd_clir.utils.info import ServiceInfo, service_info
+from dd_clir.utils.logging import logger
 
 try:
     import uvicorn
@@ -22,7 +22,12 @@ state = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    state["model"] = MultilingualE5(model_dir=settings.model_dir, device=settings.device, warmup=settings.warmup)
+    state["model"] = OnnxModel(
+        model_dir=settings.model_dir, 
+        device=settings.device, 
+        warmup=settings.warmup,
+        quantized=settings.quantized,
+    )
     service_health.status = ServiceHealthStatus.OK
     yield
     state["model"].unload()
@@ -47,15 +52,15 @@ async def info() -> ServiceInfo:
 
 
 @app.post("/infer", response_model_exclude_none=True)
-async def infer(request: MultilingualE5Request) -> MultilingualE5Response:
+async def infer(request: EmbeddingRequest) -> EmbeddingResponse:
     embedding = await handle_batch(request.text)
     if request.normalized:
         embedding = [e / e.norm() for e in embedding]
-    return MultilingualE5Response(embedding=embedding)
+    return EmbeddingResponse(embedding=embedding)
 
 
 def main():
-    uvicorn.run("dd_me5.interfaces._api:app", host=settings.host, port=settings.port, reload=settings.reload)
+    uvicorn.run("dd_clir.interfaces._api:app", host=settings.host, port=settings.port, reload=settings.reload)
 
 
 if __name__ == "__main__":

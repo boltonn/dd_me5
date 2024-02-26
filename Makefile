@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 CONDA_ACTIVATE = source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
-NAME = dd_me5
+NAME = dd_clir
 MODEL_DIR = /home/boltonn/models/tesseract
 _BUILD_ARGS_RELEASE_TAG ?= latest
 _BUILD_ARGS_DOCKERFILE ?= Dockerfile

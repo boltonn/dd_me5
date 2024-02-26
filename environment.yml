@@ -1,10 +1,9 @@
-name: dd_me5
+name: dd_clir
 channels:
   - conda-forge
 dependencies:
   - python=3.11
-  - spyder
   - pip
   - pip:
-    - -e .[dev,fastapi]
+    - -e .[dev,fastapi,cuda]
 
