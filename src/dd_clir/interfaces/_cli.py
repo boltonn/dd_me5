@@ -37,7 +37,7 @@ def load(file_path: Path, min_length: int = 50) -> str:
     data = read_json(file_path)
     text = _get_text_from_json(data)
     if text and len(text) > min_length:
-        return {"file_path": file_path, "text": text.strip()}
+        return {"file_path": file_path, "text": f"passage: {text.strip()}"}
 
 class EmbeddingDataset(Dataset):
     def __init__(self, input_dir: Path):
