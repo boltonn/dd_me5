@@ -7,7 +7,7 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 
-from dd_clir.core.models.onnx import OnnxModel
+from dd_clir.core.models.pytorch import PytorchModel
 
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -54,7 +54,7 @@ class EmbeddingDataset(Dataset):
         if data:
             return data
 
-def _collate(output:list[dict]) -> dict:
+def collate(output:list[dict]) -> dict:
     output = [o for o in output if o]
     if output:
         return {
@@ -72,9 +72,9 @@ def main(
     quantized: bool = False
 ):
     
-    model = OnnxModel(model_dir=model_dir, device=device, quantized=quantized)
+    model = PytorchModel(model_dir=model_dir, device=device, quantized=quantized)
     dataset = EmbeddingDataset(in_dir)
-    dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, collate_fn=_collate)
+    dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, collate_fn=collate)
 
     n_batches = len(dataloader)
     progress_bar = tqdm(dataloader, total=n_batches)
